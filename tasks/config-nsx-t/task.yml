@@ -1,0 +1,23 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: czero/rootfs
+
+params:
+  NSX_API_MANAGERS
+  NSI_API_USER
+  NSI_API_PASSWORD
+  NSI_API_CA_CERT
+  NCP_FOUNDATION_NAME
+  NCP_OVERLAY_TZ
+  NCP_TIER0_ROUTER
+
+inputs:
+  - name: pcf-pipelines
+
+run:
+  path: pcf-pipelines/tasks/config-ert/task.sh

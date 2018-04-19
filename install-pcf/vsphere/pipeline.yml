@@ -9,9 +9,8 @@ resources:
 - name: pcf-pipelines
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
-    branch: master
-    private_key: {{git_private_key}}
+    uri: https://github.com/ntdt/pcf-pipelines.git
+    branch: nsxt
 
 - name: pcf-ops-manager
   type: pivnet
@@ -168,6 +167,101 @@ jobs:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
 
+####################
+### VMware NSX-T ###
+####################
+- name: upload-nsx-t
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: vmware-nsx-t
+      params: {globs: ["VMware-NSX-T*.pivotal"]}
+    - get: pcf-ops-manager
+      params: {globs: []}
+      passed: [deploy-director]
+      trigger: true
+  - task: upload-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      IAAS: "vsphere"
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_CLIENT_ID: {{opsman_client_id}}
+      OPSMAN_CLIENT_SECRET: {{opsman_client_secret}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}
+- name: stage-nsx-t
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pcf-ops-manager
+      params: {globs: []}
+      passed: [upload-nsx-t]
+      trigger: true
+    - get: pivnet-product
+      resource: vmware-nsx-t
+      params: {globs: ["VMware-NSX-T*.pivotal"]}
+      passed: [upload-nsx-t]
+
+  - task: stage
+    file: pcf-pipelines/tasks/stage-product/task.yml
+    params:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_CLIENT_ID: {{opsman_client_id}}
+      OPSMAN_CLIENT_SECRET: {{opsman_client_secret}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+
+- name: deploy-nsx-t
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pcf-ops-manager
+      params: {globs: []}
+      passed: [stage-nsx-t]
+      trigger: true
+    - get: pivnet-product
+      resource: vmware-nsx-t
+      params: {globs: ["VMware-NSX-T*.pivotal"]}
+      passed: [stage-nsx-t]
+
+  - task: configure
+    file: pcf-pipelines/tasks/config-nsx-t/task.yml
+    params:
+      NSX_API_MANAGERS: {{nsx_address}}
+      NSI_API_USER: {{nsx_username}}
+      NSI_API_PASSWORD: {{nsx_password}}
+      NSI_API_CA_CERT: {{nsx_ca_certificate}}
+      NCP_FOUNDATION_NAME: {{ncp_foundation_name}}
+      NCP_OVERLAY_TZ: {{ncp_overlay_tz}}
+      NCP_TIER0_ROUTER: {{ncp_tier0_router}}
+      NCP_CONTAINER_BLOCK_NAME: {{ncp_container_block_name}}
+      NCP_SUBNET_PREFIX: {{ncp_subnet_prefix}}
+
+- name: apply-nsx-t
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pcf-ops-manager
+      params: {globs: []}
+      passed: [deploy-nsx-t]
+      trigger: true
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_CLIENT_ID: {{opsman_client_id}}
+      OPSMAN_CLIENT_SECRET: {{opsman_client_secret}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+
+##########
+## ERT  ##
+##########
 - name: upload-ert
   plan:
   - aggregate:
@@ -177,7 +271,7 @@ jobs:
       params: {globs: ["cf*.pivotal"]}
     - get: pcf-ops-manager
       params: {globs: []}
-      passed: [deploy-director]
+      passed: [apply-nsx-t]
       trigger: true
 
   - task: upload-tile
