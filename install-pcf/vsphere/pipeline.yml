@@ -11,7 +11,7 @@ resources:
   source:
     uri: https://github.com/ntdt/pcf-pipelines.git
     branch: master
-    tag_filter: v0.23.0
+    tag_filter: v0.23.nsxt
 
 - name: pcf-ops-manager
   type: pivnet
@@ -171,7 +171,7 @@ jobs:
       params: {globs: ["VMware-NSX-T*.pivotal"]}
     - get: pcf-ops-manager
       params: {globs: []}
-      passed: [deploy-director]
+      passed: [configure-director]
       trigger: true
   - task: upload-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml

@@ -45,9 +45,7 @@ properties=$(
        ".properties.container_ip_blocks": {
          "value": [
            {
-             "name": {
-               "value": $container_block_name,
-             }
+             "name": $container_block_name
            }
          ]
        },
