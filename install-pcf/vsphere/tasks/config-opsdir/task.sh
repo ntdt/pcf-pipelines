@@ -35,6 +35,7 @@ iaas_configuration=$(
     "ssl_verification_enabled": $ssl_verification_enabled,
     "nsx_networking_enabled": $nsx_networking_enabled,
     "nsx_address": $nsx_address,
+    "nsx_mode": "nsx-t",
     "nsx_username": $nsx_username,
     "nsx_password": $nsx_password,
     "nsx_ca_certificate": $nsx_ca_certificate
@@ -165,6 +166,7 @@ director_config=$(cat <<-EOF
   "ntp_servers_string": "$NTP_SERVERS",
   "resurrector_enabled": $ENABLE_VM_RESURRECTOR,
   "max_threads": $MAX_THREADS,
+  "disable_dns_release": 1,
   "database_type": "internal",
   "blobstore_type": "local",
   "director_hostname": "$OPS_DIR_HOSTNAME"
