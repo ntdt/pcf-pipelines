@@ -28,6 +28,14 @@ resources:
     product_version: {{ert_major_minor_version}}
     sort_by: semver
 
+- name: vmware-nsx-t
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: VMware-NSX-T
+    product_version: {{vmware_nsx_t_major_minor_version}}
+    sort_by: semver
+
 jobs:
 - name: deploy-opsman
   plan:
