@@ -240,9 +240,9 @@ jobs:
     file: pcf-pipelines/tasks/config-nsx-t/task.yml
     params:
       NSX_API_MANAGERS: {{nsx_address}}
-      NSI_API_USER: {{nsx_username}}
-      NSI_API_PASSWORD: {{nsx_password}}
-      NSI_API_CA_CERT: {{nsx_ca_certificate}}
+      NSX_API_USER: {{nsx_username}}
+      NSX_API_PASSWORD: {{nsx_password}}
+      NSX_API_CA_CERT: {{nsx_ca_certificate}}
       NCP_FOUNDATION_NAME: {{ncp_foundation_name}}
       NCP_OVERLAY_TZ: {{ncp_overlay_tz}}
       NCP_TIER0_ROUTER: {{ncp_tier0_router}}
