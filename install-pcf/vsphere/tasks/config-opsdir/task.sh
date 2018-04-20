@@ -165,7 +165,6 @@ director_config=$(cat <<-EOF
   "max_threads": $MAX_THREADS,
   "database_type": "internal",
   "blobstore_type": "local",
-  "disable_dns_release": 1,
   "director_hostname": "$OPS_DIR_HOSTNAME"
 }
 EOF
