@@ -252,23 +252,6 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
 
-- name: apply-nsx-t
-  plan:
-  - aggregate:
-    - get: pcf-pipelines
-    - get: pcf-ops-manager
-      params: {globs: []}
-      passed: [deploy-nsx-t]
-      trigger: true
-
-  - task: apply-changes
-    file: pcf-pipelines/tasks/apply-changes/task.yml
-    params:
-      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
-      OPSMAN_CLIENT_ID: {{opsman_client_id}}
-      OPSMAN_CLIENT_SECRET: {{opsman_client_secret}}
-      OPSMAN_USERNAME: {{opsman_admin_username}}
-      OPSMAN_PASSWORD: {{opsman_admin_password}}
 
 ##########
 ## ERT  ##
@@ -282,7 +265,7 @@ jobs:
       params: {globs: ["cf*.pivotal"]}
     - get: pcf-ops-manager
       params: {globs: []}
-      passed: [apply-nsx-t]
+      passed: [deploy-nsx-t]
       trigger: true
 
   - task: upload-tile
