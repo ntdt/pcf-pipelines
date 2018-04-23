@@ -143,8 +143,14 @@ cf_properties=$(
       ".cloud_controller.default_quota_max_number_services": {
         "value": $default_quota_max_services_count
       },
+      ".cloud_controller.enable_custom_buildpacks": {
+        "value": false
+      },
       ".cloud_controller.allow_app_ssh_access": {
         "value": $allow_app_ssh_access
+      },
+      ".cloud_controller.default_app_ssh_access": {
+        "value": false
       },
       ".ha_proxy.static_ips": {
         "value": $ha_proxy_ips
